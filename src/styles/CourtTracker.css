@@ -1,0 +1,542 @@
+/* ESPN-style modern dark theme */
+:root {
+  --dark-bg: #0a0a0a;
+  --panel-bg: #1a1a1a;
+  --primary-color: #d00;
+  --primary-color-dark: #a00;
+  --accent-color: #ff0;
+  --text-color: #fff;
+  --text-color-muted: #aaa;
+  --success-color: #2ecc71;
+  --danger-color: #e74c3c;
+  --warning-color: #f39c12;
+  --neutral-color: #3498db;
+  --border-radius: 6px;
+  --panel-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+body {
+  background-color: var(--dark-bg);
+  color: var(--text-color);
+  font-family: 'Roboto', 'Arial', sans-serif;
+}
+
+.court-tracker {
+  padding: 20px;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  background-color: var(--dark-bg);
+  border-radius: var(--border-radius);
+  box-shadow: var(--panel-shadow);
+}
+
+.tracker-header {
+  margin-bottom: 20px;
+  border-bottom: 2px solid var(--primary-color);
+  padding-bottom: 10px;
+}
+
+.tracker-header h1 {
+  color: var(--text-color);
+  font-size: 2rem;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+}
+
+.tracker-header h1::before {
+  content: "";
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  background-color: var(--primary-color);
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.controls {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  background-color: var(--panel-bg);
+  border-radius: var(--border-radius);
+  padding: 15px;
+  box-shadow: var(--panel-shadow);
+}
+
+.primary-controls,
+.court-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  align-items: center;
+}
+
+.team-selection,
+.shot-selection,
+.court-type-selection,
+.court-theme-selection,
+.court-size-selection {
+  margin-right: 15px;
+}
+
+.controls label {
+  color: var(--text-color);
+  font-weight: 500;
+  margin-right: 8px;
+}
+
+.controls select,
+.controls input[type="range"] {
+  background-color: #222;
+  color: var(--text-color);
+  border: 1px solid #444;
+  border-radius: 4px;
+  padding: 8px 12px;
+}
+
+.controls select option {
+  background-color: #222;
+  color: var(--text-color);
+}
+
+.shot-selection label,
+.shot-filter-selection label {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 15px;
+  cursor: pointer;
+}
+
+.shot-selection input[type="radio"],
+.shot-filter-selection input[type="radio"] {
+  margin-right: 5px;
+}
+
+.shot-filter-selection {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.shot-filter-selection > label {
+  font-weight: 600;
+  color: var(--text-color);
+  margin-bottom: 2px;
+}
+
+.filter-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.filter-options label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  background-color: #222;
+  padding: 5px 10px;
+  border-radius: 4px;
+  border: 1px solid #333;
+  transition: all 0.2s;
+}
+
+.filter-options label:hover {
+  background-color: #2a2a2a;
+}
+
+.filter-options input[type="radio"]:checked + span,
+.filter-options label:has(input[type="radio"]:checked) {
+  background-color: #333;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 1px var(--primary-color);
+}
+
+.filter-message {
+  color: var(--accent-color) !important;
+  font-weight: bold;
+}
+
+.shot-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.shot-actions button {
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.free-throw-button {
+  background-color: #3498db;
+  color: white;
+}
+
+.free-throw-button:hover {
+  background-color: #2980b9;
+}
+
+.free-throw-button:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+}
+
+.undo-button {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.undo-button:hover {
+  background-color: #c0392b;
+}
+
+.clear-button {
+  background-color: #95a5a6;
+  color: white;
+}
+
+.clear-button:hover {
+  background-color: #7f8c8d;
+}
+
+.shot-actions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.court-message {
+  text-align: center;
+  color: var(--danger-color);
+  margin-bottom: 10px;
+  min-height: 24px;
+  font-weight: bold;
+}
+
+/* Court Layout */
+.court-layout {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  gap: 15px;
+}
+
+/* Team Panels */
+.team-panel {
+  width: 220px;
+  padding: 15px;
+  background-color: var(--panel-bg);
+  border-radius: var(--border-radius);
+  box-shadow: var(--panel-shadow);
+  border-top: 3px solid var(--neutral-color);
+}
+
+.home-panel {
+  border-top-color: #1976d2;
+}
+
+.away-panel {
+  border-top-color: var(--primary-color);
+}
+
+.team-panel h3 {
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #333;
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.team-name {
+  flex: 1;
+  text-align: center;
+}
+
+.edit-team-name-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  opacity: 0.6;
+  transition: all 0.2s;
+  color: var(--text-color);
+  padding: 3px;
+  border-radius: 3px;
+  line-height: 1;
+}
+
+.edit-team-name-btn:hover {
+  opacity: 1;
+  background-color: #444;
+}
+
+.home-panel h3 {
+  color: #1976d2;
+}
+
+.away-panel h3 {
+  color: var(--primary-color);
+}
+
+.team-player-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.team-player-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  background-color: #222;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-left: 3px solid transparent;
+}
+
+.team-player-item:hover {
+  background-color: #2a2a2a;
+  transform: translateX(2px);
+}
+
+.team-player-item.active {
+  background-color: #333;
+  border-left-color: var(--accent-color);
+  font-weight: bold;
+}
+
+.player-name {
+  flex-grow: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.player-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.player-edit-btn,
+.player-delete-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  opacity: 0.6;
+  transition: all 0.2s;
+  color: var(--text-color);
+  padding: 3px;
+  border-radius: 3px;
+}
+
+.player-edit-btn:hover {
+  opacity: 1;
+  background-color: #444;
+}
+
+.player-delete-btn:hover {
+  opacity: 1;
+  background-color: rgba(231, 76, 60, 0.2);
+}
+
+.add-team-player-btn {
+  margin-top: 12px;
+  padding: 10px;
+  background-color: #2c3e50;
+  color: var(--text-color);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: center;
+  transition: background-color 0.2s;
+  font-weight: 500;
+}
+
+.add-team-player-btn:hover {
+  background-color: #34495e;
+}
+
+/* Court Container */
+.court-wrapper {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--panel-bg);
+  border-radius: var(--border-radius);
+  padding: 15px;
+  box-shadow: var(--panel-shadow);
+  position: relative;
+  overflow: hidden;
+}
+
+.court-wrapper::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(to right, #1976d2, var(--primary-color));
+}
+
+.court-container {
+  position: relative;
+  min-height: 300px;
+  cursor: crosshair;
+  border-radius: 4px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Shot Markers */
+.shot-marker {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  transition: transform 0.1s, width 0.1s, height 0.1s;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.shot-marker:before {
+  content: "";
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  right: -3px;
+  bottom: -3px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  z-index: -1;
+}
+
+.shot-marker.make {
+  background-color: rgba(46, 204, 113, 1);
+  border: 1px solid #27ae60;
+}
+
+.shot-marker.miss {
+  background-color: rgba(231, 76, 60, 1);
+  border: 1px solid #c0392b;
+}
+
+/* Zone indicators - different colored borders */
+.shot-marker.make[title*="paint"]:before {
+  border-color: #9b59b6;
+}
+
+.shot-marker.make[title*="midRange"]:before {
+  border-color: #f39c12;
+}
+
+.shot-marker.make[title*="threePoint"]:before {
+  border-color: #3498db;
+}
+
+.shot-marker.miss[title*="paint"]:before {
+  border-color: #9b59b6;
+}
+
+.shot-marker.miss[title*="midRange"]:before {
+  border-color: #f39c12;
+}
+
+.shot-marker.miss[title*="threePoint"]:before {
+  border-color: #3498db;
+}
+
+.shot-marker:hover {
+  transform: translate(-50%, -50%) scale(1.5);
+  z-index: 100;
+}
+
+.stats-container {
+  margin-top: 25px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.player-stats,
+.team-stats,
+.overall-stats-container {
+  background-color: var(--panel-bg);
+  padding: 20px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--panel-shadow);
+}
+
+.player-stats h3,
+.team-stats h3,
+.overall-stats-container h3 {
+  color: var(--text-color);
+  margin-top: 0;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #333;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+@media (max-width: 900px) {
+  .court-layout {
+    flex-direction: column;
+  }
+  
+  .team-panel {
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  .court-wrapper {
+    order: -1;
+    margin-bottom: 15px;
+  }
+  
+  .team-player-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+  }
+  
+  .tracker-header h1 {
+    font-size: 1.5rem;
+  }
+  
+  .shot-actions {
+    margin-left: 0;
+    width: 100%;
+    margin-top: 10px;
+  }
+  
+  .undo-button,
+  .clear-button {
+    flex: 1;
+  }
+} 

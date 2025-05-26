@@ -1,0 +1,213 @@
+/* ESPN-style modern dark theme for PlayerSelector */
+.player-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  background-color: var(--panel-bg);
+  border-radius: var(--border-radius);
+  padding: 15px;
+  box-shadow: var(--panel-shadow);
+  margin-bottom: 20px;
+}
+
+.player-select-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.player-select-container label {
+  color: var(--text-color);
+  font-weight: 500;
+  margin-right: 0;
+}
+
+.player-select-container select {
+  padding: 8px 12px;
+  border: 1px solid #444;
+  background-color: #222;
+  color: var(--text-color);
+  border-radius: 4px;
+  min-width: 180px;
+}
+
+.add-player-button {
+  background-color: #2c3e50;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.add-player-button:hover {
+  background-color: #34495e;
+}
+
+.player-quick-select {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.player-button-container {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.player-button {
+  background-color: #222;
+  border: 1px solid #444;
+  border-radius: 4px;
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+  color: var(--text-color);
+}
+
+.player-button:hover {
+  background-color: #2a2a2a;
+  transform: translateY(-2px);
+}
+
+.player-button.active {
+  background-color: #2980b9;
+  color: white;
+  border-color: #1c6ea4;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.edit-name-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 4px 6px;
+  border-radius: 4px;
+  color: var(--text-color-muted);
+  transition: all 0.2s;
+}
+
+.edit-name-button:hover {
+  background-color: #444;
+  color: var(--text-color);
+}
+
+.edit-player-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background-color: #222;
+  border-radius: 4px;
+  padding: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.edit-player-form input {
+  padding: 8px 10px;
+  border: 1px solid #444;
+  background-color: #333;
+  color: var(--text-color);
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.edit-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.edit-buttons button {
+  flex: 1;
+  padding: 6px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.save-button {
+  background-color: #2ecc71;
+  color: white;
+}
+
+.save-button:hover {
+  background-color: #27ae60;
+}
+
+.cancel-button {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.cancel-button:hover {
+  background-color: #c0392b;
+}
+
+.add-player-form {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.add-player-form input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #444;
+  background-color: #222;
+  color: var(--text-color);
+  border-radius: 4px;
+}
+
+.add-player-form button {
+  background-color: #2ecc71;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.add-player-form button:hover {
+  background-color: #27ae60;
+}
+
+@media (max-width: 768px) {
+  .player-select-container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .player-select-container select {
+    width: 100%;
+  }
+  
+  .add-player-button {
+    width: 100%;
+    margin-top: 8px;
+  }
+  
+  .player-quick-select {
+    margin-top: 15px;
+    width: 100%;
+  }
+  
+  .player-button-container {
+    width: 100%;
+  }
+  
+  .player-button {
+    flex: 1;
+  }
+} 

@@ -1,0 +1,181 @@
+.shot-stats {
+  width: 100%;
+  padding: 15px;
+  border-radius: 5px;
+}
+
+.download-stats {
+  margin-bottom: 20px;
+  text-align: right;
+}
+
+.download-pdf-btn {
+  background-color: #2980b9;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.download-pdf-btn:hover {
+  background-color: #3498db;
+}
+
+.download-pdf-btn:active {
+  background-color: #2472a4;
+}
+
+.empty-stats {
+  text-align: center;
+  padding: 20px;
+  font-style: italic;
+  color: #666;
+}
+
+.shot-stats h4 {
+  margin-top: 20px;
+  margin-bottom: 15px;
+  color: #333;
+  font-size: 16px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 5px;
+}
+
+.shot-stats h5 {
+  margin-top: 0;
+  text-align: center;
+  margin-bottom: 10px;
+  color: #333;
+  font-size: 14px;
+}
+
+.overall-stats {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.stat-box {
+  flex: 1;
+  min-width: 70px;
+  padding: 10px;
+  background-color: white;
+  border-radius: 5px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  color: #666;
+  margin-bottom: 5px;
+}
+
+.stat-value {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.zone-stats {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.zone-stat-box {
+  flex: 1;
+  min-width: 120px;
+  padding: 10px;
+  background-color: white;
+  border-radius: 5px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.zone-stat-details {
+  font-size: 0.85rem;
+  color: #333;
+}
+
+.zone-stat-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+  padding: 3px 0;
+  border-bottom: 1px dashed #eee;
+}
+
+.zone-stat-row:last-child {
+  border-bottom: none;
+}
+
+.shooting-breakdown {
+  margin: 20px 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.field-goals,
+.free-throws {
+  background-color: rgba(255, 255, 255, 0.05);
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.field-goals h4,
+.free-throws h4 {
+  margin: 0 0 10px 0;
+  color: var(--text-color);
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.stat-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+}
+
+.stat-row span:first-child {
+  color: var(--text-secondary);
+}
+
+@media (max-width: 600px) {
+  .shooting-breakdown {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .overall-stats,
+  .zone-stats {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .stat-box,
+  .zone-stat-box {
+    min-width: unset;
+  }
+  
+  .stat-value {
+    font-size: 1.1rem;
+  }
+} 
