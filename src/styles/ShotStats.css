@@ -1,116 +1,129 @@
 .shot-stats {
   width: 100%;
-  padding: 15px;
-  border-radius: 5px;
+  padding: 20px;
+  border-radius: var(--border-radius);
+  background-color: var(--panel-bg);
+  box-shadow: var(--panel-shadow);
 }
 
 .download-stats {
-  margin-bottom: 20px;
+  margin-bottom: 25px;
   text-align: right;
 }
 
 .download-pdf-btn {
-  background-color: #2980b9;
-  color: white;
+  background-color: var(--accent-color);
+  color: #000;
   border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
+  padding: 10px 20px;
+  border-radius: var(--border-radius);
   cursor: pointer;
-  font-size: 14px;
-  transition: background-color 0.2s;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .download-pdf-btn:hover {
-  background-color: #3498db;
+  background-color: #FFD700;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.4);
 }
 
 .download-pdf-btn:active {
-  background-color: #2472a4;
+  background-color: #E6B800;
+  transform: translateY(0);
 }
 
 .empty-stats {
   text-align: center;
-  padding: 20px;
+  padding: 25px;
   font-style: italic;
-  color: #666;
+  color: var(--text-color-muted);
 }
 
 .shot-stats h4 {
-  margin-top: 20px;
-  margin-bottom: 15px;
-  color: #333;
-  font-size: 16px;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 5px;
+  margin-top: 25px;
+  margin-bottom: 20px;
+  color: var(--text-color);
+  font-size: 1.1rem;
+  border-bottom: 2px solid var(--primary-color);
+  padding-bottom: 10px;
+  text-transform: uppercase;
 }
 
 .shot-stats h5 {
   margin-top: 0;
   text-align: center;
-  margin-bottom: 10px;
-  color: #333;
-  font-size: 14px;
+  margin-bottom: 15px;
+  color: var(--accent-color);
+  font-size: 1rem;
+  font-weight: bold;
+  text-transform: uppercase;
 }
 
 .overall-stats {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 15px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 20px;
 }
 
 .stat-box {
   flex: 1;
-  min-width: 70px;
-  padding: 10px;
-  background-color: white;
-  border-radius: 5px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  min-width: 80px;
+  padding: 15px;
+  background-color: #333;
+  border-radius: var(--border-radius);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   text-align: center;
+  border-top: 3px solid var(--neutral-color);
 }
 
 .stat-label {
-  font-size: 0.85rem;
-  color: #666;
-  margin-bottom: 5px;
+  font-size: 0.9rem;
+  color: var(--text-color-muted);
+  margin-bottom: 8px;
+  text-transform: uppercase;
 }
 
 .stat-value {
-  font-size: 1.3rem;
+  font-size: 1.5rem;
   font-weight: bold;
-  color: #333;
+  color: var(--text-color);
 }
 
 .zone-stats {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 15px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 20px;
 }
 
 .zone-stat-box {
   flex: 1;
-  min-width: 120px;
-  padding: 10px;
-  background-color: white;
-  border-radius: 5px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  min-width: 140px;
+  padding: 15px;
+  background-color: #333;
+  border-radius: var(--border-radius);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  border-top: 3px solid transparent;
 }
 
+.zone-stat-box.paint { border-top-color: #9b59b6; }
+.zone-stat-box.mid-range { border-top-color: #f39c12; }
+.zone-stat-box.three-point { border-top-color: #3498db; }
+
 .zone-stat-details {
-  font-size: 0.85rem;
-  color: #333;
+  font-size: 0.9rem;
+  color: var(--text-color);
 }
 
 .zone-stat-row {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 5px;
-  padding: 3px 0;
-  border-bottom: 1px dashed #eee;
+  margin-bottom: 8px;
+  padding: 5px 0;
+  border-bottom: 1px dashed #555;
 }
 
 .zone-stat-row:last-child {
@@ -118,7 +131,7 @@
 }
 
 .shooting-breakdown {
-  margin: 20px 0;
+  margin: 25px 0;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 20px;
@@ -126,16 +139,17 @@
 
 .field-goals,
 .free-throws {
-  background-color: rgba(255, 255, 255, 0.05);
-  padding: 15px;
-  border-radius: 8px;
+  background-color: #333;
+  padding: 20px;
+  border-radius: var(--border-radius);
+  border-top: 3px solid var(--success-color);
 }
 
 .field-goals h4,
 .free-throws h4 {
-  margin: 0 0 10px 0;
+  margin: 0 0 15px 0;
   color: var(--text-color);
-  font-size: 1rem;
+  font-size: 1.1rem;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
@@ -143,18 +157,18 @@
 .stat-details {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 
 .stat-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.9rem;
+  font-size: 1rem;
 }
 
 .stat-row span:first-child {
-  color: var(--text-secondary);
+  color: var(--text-color-muted);
 }
 
 @media (max-width: 600px) {
@@ -166,8 +180,8 @@
 @media (max-width: 768px) {
   .overall-stats,
   .zone-stats {
-    flex-direction: column;
-    gap: 10px;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
   }
   
   .stat-box,
@@ -176,6 +190,6 @@
   }
   
   .stat-value {
-    font-size: 1.1rem;
+    font-size: 1.3rem;
   }
 } 

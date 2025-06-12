@@ -1,18 +1,18 @@
 /* ESPN-style modern dark theme */
 :root {
-  --dark-bg: #0a0a0a;
-  --panel-bg: #1a1a1a;
-  --primary-color: #d00;
-  --primary-color-dark: #a00;
-  --accent-color: #ff0;
-  --text-color: #fff;
-  --text-color-muted: #aaa;
-  --success-color: #2ecc71;
-  --danger-color: #e74c3c;
-  --warning-color: #f39c12;
-  --neutral-color: #3498db;
-  --border-radius: 6px;
-  --panel-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+  --dark-bg: #1a1a1a;
+  --panel-bg: #2c2c2c;
+  --primary-color: #990000;
+  --primary-color-dark: #7a0000;
+  --accent-color: #FFCC00;
+  --text-color: #f5f5f5;
+  --text-color-muted: #b0b0b0;
+  --success-color: #2E8B57;
+  --danger-color: #D2B48C;
+  --warning-color: #FFA500;
+  --neutral-color: #6495ED;
+  --border-radius: 8px;
+  --panel-shadow: 0 6px 12px rgba(0, 0, 0, 0.6);
 }
 
 body {
