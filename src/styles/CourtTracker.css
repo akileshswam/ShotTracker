@@ -164,18 +164,18 @@ body {
 }
 
 .shot-actions {
-  display: flex;
-  gap: 10px;
-  margin-top: 15px;
+  margin-left: 0;
+  width: 100%;
+  margin-top: 10px;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .shot-actions button {
-  padding: 8px 16px;
-  border-radius: 4px;
-  border: none;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.2s ease;
+  flex: 1;
+  min-width: 120px;
+  font-size: 0.9rem;
+  padding: 6px 12px;
 }
 
 .free-throw-button {
@@ -188,6 +188,76 @@ body {
 }
 
 .free-throw-button:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+}
+
+.assist-button {
+  background-color: #27ae60;
+  color: white;
+}
+
+.assist-button:hover {
+  background-color: #229954;
+}
+
+.assist-button:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+}
+
+.rebound-button {
+  background-color: #f39c12;
+  color: white;
+}
+
+.rebound-button:hover {
+  background-color: #e67e22;
+}
+
+.rebound-button:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+}
+
+.steal-button {
+  background-color: #9b59b6;
+  color: white;
+}
+
+.steal-button:hover {
+  background-color: #8e44ad;
+}
+
+.steal-button:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+}
+
+.block-button {
+  background-color: #e67e22;
+  color: white;
+}
+
+.block-button:hover {
+  background-color: #d35400;
+}
+
+.block-button:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+}
+
+.turnover-button {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.turnover-button:hover {
+  background-color: #c0392b;
+}
+
+.turnover-button:disabled {
   background-color: #bdc3c7;
   cursor: not-allowed;
 }
@@ -476,6 +546,104 @@ body {
   z-index: 100;
 }
 
+/* Points Tracker */
+.points-tracker {
+  margin: 25px 0;
+  background-color: var(--panel-bg);
+  padding: 20px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--panel-shadow);
+}
+
+.points-tracker h3 {
+  color: var(--text-color);
+  margin-top: 0;
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 1.3rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 2px solid var(--primary-color);
+  padding-bottom: 10px;
+}
+
+.score-display {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.team-score {
+  flex: 1;
+  text-align: center;
+  padding: 20px;
+  background-color: #333;
+  border-radius: var(--border-radius);
+  border-top: 4px solid var(--primary-color);
+}
+
+.home-score {
+  border-top-color: #e74c3c;
+}
+
+.away-score {
+  border-top-color: #3498db;
+}
+
+.team-score .team-name {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: var(--text-color);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.total-points {
+  font-size: 3rem;
+  font-weight: bold;
+  color: var(--accent-color);
+  margin-bottom: 15px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.points-breakdown {
+  display: flex;
+  justify-content: space-around;
+  gap: 10px;
+}
+
+.breakdown-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.breakdown-label {
+  font-size: 0.8rem;
+  color: var(--text-color-muted);
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.breakdown-value {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: var(--text-color);
+}
+
+.score-divider {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--accent-color);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  padding: 0 15px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
 .stats-container {
   margin-top: 25px;
   display: grid;
@@ -538,5 +706,23 @@ body {
   .undo-button,
   .clear-button {
     flex: 1;
+  }
+  
+  .score-display {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .score-divider {
+    transform: rotate(90deg);
+    padding: 10px 0;
+  }
+  
+  .total-points {
+    font-size: 2.5rem;
+  }
+  
+  .points-breakdown {
+    gap: 15px;
   }
 } 

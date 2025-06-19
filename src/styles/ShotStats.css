@@ -69,6 +69,13 @@
   gap: 20px;
 }
 
+.additional-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 20px;
+  margin-bottom: 25px;
+}
+
 .stat-box {
   flex: 1;
   min-width: 80px;
@@ -179,7 +186,8 @@
 
 @media (max-width: 768px) {
   .overall-stats,
-  .zone-stats {
+  .zone-stats,
+  .additional-stats {
     grid-template-columns: 1fr 1fr;
     gap: 15px;
   }

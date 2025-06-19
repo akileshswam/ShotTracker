@@ -7,6 +7,11 @@ import PlayerSelector from './PlayerSelector';
 const CourtTracker = () => {
   const [shots, setShots] = useState([]);
   const [freeThrows, setFreeThrows] = useState([]);
+  const [assists, setAssists] = useState([]);
+  const [rebounds, setRebounds] = useState([]);
+  const [steals, setSteals] = useState([]);
+  const [blocks, setBlocks] = useState([]);
+  const [turnovers, setTurnovers] = useState([]);
   const [currentSelection, setCurrentSelection] = useState('make'); // 'make' or 'miss'
   const [players, setPlayers] = useState([
     { id: 1, name: 'Player 1', team: 'home' },
@@ -122,21 +127,81 @@ const CourtTracker = () => {
   const undoLastShot = () => {
     const lastShot = shots[shots.length - 1];
     const lastFreeThrow = freeThrows[freeThrows.length - 1];
+    const lastAssist = assists[assists.length - 1];
+    const lastRebound = rebounds[rebounds.length - 1];
+    const lastSteal = steals[steals.length - 1];
+    const lastBlock = blocks[blocks.length - 1];
+    const lastTurnover = turnovers[turnovers.length - 1];
 
-    if (!lastShot && !lastFreeThrow) return;
+    // Find the most recent action
+    const actions = [
+      { type: 'shot', item: lastShot, timestamp: lastShot?.timestamp },
+      { type: 'freeThrow', item: lastFreeThrow, timestamp: lastFreeThrow?.timestamp },
+      { type: 'assist', item: lastAssist, timestamp: lastAssist?.timestamp },
+      { type: 'rebound', item: lastRebound, timestamp: lastRebound?.timestamp },
+      { type: 'steal', item: lastSteal, timestamp: lastSteal?.timestamp },
+      { type: 'block', item: lastBlock, timestamp: lastBlock?.timestamp },
+      { type: 'turnover', item: lastTurnover, timestamp: lastTurnover?.timestamp }
+    ].filter(action => action.item);
 
-    if (!lastShot || (lastFreeThrow && lastFreeThrow.timestamp > lastShot.timestamp)) {
-      setFreeThrows(prev => {
-        const newFreeThrows = [...prev];
-        newFreeThrows.pop();
-        return newFreeThrows;
-      });
-    } else {
-      setShots(prev => {
-        const newShots = [...prev];
-        newShots.pop();
-        return newShots;
-      });
+    if (actions.length === 0) return;
+
+    // Find the most recent action
+    const mostRecent = actions.reduce((latest, current) => 
+      current.timestamp > latest.timestamp ? current : latest
+    );
+
+    // Remove the most recent action
+    switch (mostRecent.type) {
+      case 'shot':
+        setShots(prev => {
+          const newShots = [...prev];
+          newShots.pop();
+          return newShots;
+        });
+        break;
+      case 'freeThrow':
+        setFreeThrows(prev => {
+          const newFreeThrows = [...prev];
+          newFreeThrows.pop();
+          return newFreeThrows;
+        });
+        break;
+      case 'assist':
+        setAssists(prev => {
+          const newAssists = [...prev];
+          newAssists.pop();
+          return newAssists;
+        });
+        break;
+      case 'rebound':
+        setRebounds(prev => {
+          const newRebounds = [...prev];
+          newRebounds.pop();
+          return newRebounds;
+        });
+        break;
+      case 'steal':
+        setSteals(prev => {
+          const newSteals = [...prev];
+          newSteals.pop();
+          return newSteals;
+        });
+        break;
+      case 'block':
+        setBlocks(prev => {
+          const newBlocks = [...prev];
+          newBlocks.pop();
+          return newBlocks;
+        });
+        break;
+      case 'turnover':
+        setTurnovers(prev => {
+          const newTurnovers = [...prev];
+          newTurnovers.pop();
+          return newTurnovers;
+        });
+        break;
     }
   };
   
@@ -154,13 +219,28 @@ const CourtTracker = () => {
   const calculateStats = (player = null, team = null) => {
     let filteredShots = shots;
     let filteredFreeThrows = freeThrows;
+    let filteredAssists = assists;
+    let filteredRebounds = rebounds;
+    let filteredSteals = steals;
+    let filteredBlocks = blocks;
+    let filteredTurnovers = turnovers;
     
     if (player) {
       filteredShots = shots.filter(shot => shot.playerId === player.id);
       filteredFreeThrows = freeThrows.filter(ft => ft.playerId === player.id);
+      filteredAssists = assists.filter(assist => assist.playerId === player.id);
+      filteredRebounds = rebounds.filter(rebound => rebound.playerId === player.id);
+      filteredSteals = steals.filter(steal => steal.playerId === player.id);
+      filteredBlocks = blocks.filter(block => block.playerId === player.id);
+      filteredTurnovers = turnovers.filter(turnover => turnover.playerId === player.id);
     } else if (team) {
       filteredShots = shots.filter(shot => shot.team === team);
       filteredFreeThrows = freeThrows.filter(ft => ft.team === team);
+      filteredAssists = assists.filter(assist => assist.team === team);
+      filteredRebounds = rebounds.filter(rebound => rebound.team === team);
+      filteredSteals = steals.filter(steal => steal.team === team);
+      filteredBlocks = blocks.filter(block => block.team === team);
+      filteredTurnovers = turnovers.filter(turnover => turnover.team === team);
     }
     
     const fieldGoalTotal = filteredShots.length;
@@ -172,6 +252,12 @@ const CourtTracker = () => {
     const freeThrowMakes = filteredFreeThrows.filter(ft => ft.isMake).length;
     const freeThrowMisses = freeThrowTotal - freeThrowMakes;
     const freeThrowPercentage = freeThrowTotal > 0 ? Math.round((freeThrowMakes / freeThrowTotal) * 100) : 0;
+    
+    // Calculate points
+    const twoPointMakes = filteredShots.filter(shot => shot.isMake && shot.zone !== 'threePoint').length;
+    const threePointMakes = filteredShots.filter(shot => shot.isMake && shot.zone === 'threePoint').length;
+    const freeThrowPoints = freeThrowMakes;
+    const totalPoints = (twoPointMakes * 2) + (threePointMakes * 3) + freeThrowPoints;
     
     // Zone calculations for field goals
     const zones = {
@@ -196,6 +282,10 @@ const CourtTracker = () => {
       percentage: (fieldGoalTotal + freeThrowTotal) > 0 
         ? Math.round(((fieldGoalMakes + freeThrowMakes) / (fieldGoalTotal + freeThrowTotal)) * 100) 
         : 0,
+      points: totalPoints,
+      twoPointMakes,
+      threePointMakes,
+      freeThrowPoints,
       fieldGoals: {
         total: fieldGoalTotal,
         makes: fieldGoalMakes,
@@ -208,6 +298,11 @@ const CourtTracker = () => {
         misses: freeThrowMisses,
         percentage: freeThrowPercentage
       },
+      assists: filteredAssists.length,
+      rebounds: filteredRebounds.length,
+      steals: filteredSteals.length,
+      blocks: filteredBlocks.length,
+      turnovers: filteredTurnovers.length,
       zones: {
         paint: {
           ...zones.paint,
@@ -382,6 +477,11 @@ const CourtTracker = () => {
   const clearShots = () => {
     setShots([]);
     setFreeThrows([]);
+    setAssists([]);
+    setRebounds([]);
+    setSteals([]);
+    setBlocks([]);
+    setTurnovers([]);
   };
   
   // Handle shot type selection
@@ -523,6 +623,187 @@ const CourtTracker = () => {
 
     setFreeThrows(prev => [...prev, newFreeThrow]);
   };
+
+  // Add assist handler
+  const handleAssist = () => {
+    if (!selectedPlayer) {
+      alert('Please select a player first');
+      return;
+    }
+
+    const newAssist = {
+      id: Date.now(),
+      timestamp: new Date(),
+      playerId: selectedPlayer.id,
+      playerName: selectedPlayer.name,
+      team: selectedPlayer.team
+    };
+
+    setAssists(prev => [...prev, newAssist]);
+  };
+
+  // Add rebound handler
+  const handleRebound = () => {
+    if (!selectedPlayer) {
+      alert('Please select a player first');
+      return;
+    }
+
+    const newRebound = {
+      id: Date.now(),
+      timestamp: new Date(),
+      playerId: selectedPlayer.id,
+      playerName: selectedPlayer.name,
+      team: selectedPlayer.team
+    };
+
+    setRebounds(prev => [...prev, newRebound]);
+  };
+
+  // Add steal handler
+  const handleSteal = () => {
+    if (!selectedPlayer) {
+      alert('Please select a player first');
+      return;
+    }
+
+    const newSteal = {
+      id: Date.now(),
+      timestamp: new Date(),
+      playerId: selectedPlayer.id,
+      playerName: selectedPlayer.name,
+      team: selectedPlayer.team
+    };
+
+    setSteals(prev => [...prev, newSteal]);
+  };
+
+  // Add block handler
+  const handleBlock = () => {
+    if (!selectedPlayer) {
+      alert('Please select a player first');
+      return;
+    }
+
+    const newBlock = {
+      id: Date.now(),
+      timestamp: new Date(),
+      playerId: selectedPlayer.id,
+      playerName: selectedPlayer.name,
+      team: selectedPlayer.team
+    };
+
+    setBlocks(prev => [...prev, newBlock]);
+  };
+
+  // Add turnover handler
+  const handleTurnover = () => {
+    if (!selectedPlayer) {
+      alert('Please select a player first');
+      return;
+    }
+
+    const newTurnover = {
+      id: Date.now(),
+      timestamp: new Date(),
+      playerId: selectedPlayer.id,
+      playerName: selectedPlayer.name,
+      team: selectedPlayer.team
+    };
+
+    setTurnovers(prev => [...prev, newTurnover]);
+  };
+
+  // Function to capture court as image
+  const captureCourtImage = async (teamFilter = null) => {
+    if (!courtContainerRef.current) return null;
+    
+    // Temporarily hide shots from other team if team filter is provided
+    const shotElements = courtContainerRef.current.querySelectorAll('.shot-marker');
+    const hiddenShots = [];
+    
+    if (teamFilter) {
+      shotElements.forEach(shot => {
+        const shotData = shots.find(s => s.id === parseInt(shot.getAttribute('data-shot-id')));
+        if (shotData && shotData.team !== teamFilter) {
+          shot.style.display = 'none';
+          hiddenShots.push(shot);
+        }
+      });
+    }
+    
+    // Use html2canvas to capture the court
+    try {
+      const html2canvas = (await import('html2canvas')).default;
+      const canvas = await html2canvas(courtContainerRef.current, {
+        backgroundColor: null,
+        scale: 2, // Higher resolution
+        useCORS: true,
+        allowTaint: true
+      });
+      
+      // Restore hidden shots
+      hiddenShots.forEach(shot => {
+        shot.style.display = '';
+      });
+      
+      return canvas.toDataURL('image/png');
+    } catch (error) {
+      console.error('Error capturing court image:', error);
+      
+      // Restore hidden shots on error
+      hiddenShots.forEach(shot => {
+        shot.style.display = '';
+      });
+      
+      return null;
+    }
+  };
+
+  // Function to generate player stats PDF with court image
+  const generatePlayerStatsPDFWithCourt = async () => {
+    if (!selectedPlayer) {
+      alert('Please select a player first');
+      return;
+    }
+
+    const courtImage = await captureCourtImage();
+    const stats = calculateStats(selectedPlayer);
+    
+    // Import and call the PDF generator
+    const { generatePlayerStatsPDF } = await import('../utils/pdfGenerator');
+    generatePlayerStatsPDF(selectedPlayer.name, stats, selectedTeam === 'home' ? teamNames.home : teamNames.away, courtImage);
+  };
+
+  // Function to generate box score PDF with court image
+  const generateBoxScorePDFWithCourt = async () => {
+    // Capture separate shot charts for each team
+    const homeTeamChart = await captureCourtImage('home');
+    const awayTeamChart = await captureCourtImage('away');
+    
+    const homeTeamStats = calculateStats(null, 'home');
+    const awayTeamStats = calculateStats(null, 'away');
+    const gameData = {
+      homeTeam: teamNames.home,
+      awayTeam: teamNames.away,
+      homeStats: homeTeamStats,
+      awayStats: awayTeamStats,
+      homePlayers: homePlayers,
+      awayPlayers: awayPlayers,
+      homePlayerStats: Object.fromEntries(
+        homePlayers.map(p => [p.id, calculateStats(p)])
+      ),
+      awayPlayerStats: Object.fromEntries(
+        awayPlayers.map(p => [p.id, calculateStats(p)])
+      ),
+      homeTeamChart,
+      awayTeamChart
+    };
+    
+    // Import and call the PDF generator
+    const { generateBoxScorePDF } = await import('../utils/pdfGenerator');
+    generateBoxScorePDF(gameData);
+  };
   
   return (
     <div className="court-tracker">
@@ -607,18 +888,53 @@ const CourtTracker = () => {
               Record Free Throw
             </button>
             <button 
+              onClick={handleAssist} 
+              className="assist-button"
+              disabled={!selectedPlayer}
+            >
+              Record Assist
+            </button>
+            <button 
+              onClick={handleRebound} 
+              className="rebound-button"
+              disabled={!selectedPlayer}
+            >
+              Record Rebound
+            </button>
+            <button 
+              onClick={handleSteal} 
+              className="steal-button"
+              disabled={!selectedPlayer}
+            >
+              Record Steal
+            </button>
+            <button 
+              onClick={handleBlock} 
+              className="block-button"
+              disabled={!selectedPlayer}
+            >
+              Record Block
+            </button>
+            <button 
+              onClick={handleTurnover} 
+              className="turnover-button"
+              disabled={!selectedPlayer}
+            >
+              Record Turnover
+            </button>
+            <button 
               onClick={undoLastShot} 
               className="undo-button" 
-              disabled={shots.length === 0 && freeThrows.length === 0}
+              disabled={shots.length === 0 && freeThrows.length === 0 && assists.length === 0 && rebounds.length === 0 && steals.length === 0 && blocks.length === 0 && turnovers.length === 0}
             >
-              Undo Last Shot
+              Undo Last Action
             </button>
             <button 
               onClick={clearShots} 
               className="clear-button" 
-              disabled={shots.length === 0 && freeThrows.length === 0}
+              disabled={shots.length === 0 && freeThrows.length === 0 && assists.length === 0 && rebounds.length === 0 && steals.length === 0 && blocks.length === 0 && turnovers.length === 0}
             >
-              Clear All Shots
+              Clear All Stats
             </button>
           </div>
         </div>
@@ -763,6 +1079,7 @@ const CourtTracker = () => {
             {getFilteredShots().map(shot => (
               <div
                 key={shot.id}
+                data-shot-id={shot.id}
                 className={`shot-marker ${shot.isMake ? 'make' : 'miss'}`}
                 style={{
                   left: `${shot.x * 100}%`,
@@ -842,6 +1159,52 @@ const CourtTracker = () => {
         </div>
       </div>
       
+      {/* Points Tracker */}
+      <div className="points-tracker">
+        <h3>Score</h3>
+        <div className="score-display">
+          <div className="team-score home-score">
+            <div className="team-name">{teamNames.home}</div>
+            <div className="total-points">{calculateStats(null, 'home').points}</div>
+            <div className="points-breakdown">
+              <span className="breakdown-item">
+                <span className="breakdown-label">2PT:</span>
+                <span className="breakdown-value">{calculateStats(null, 'home').twoPointMakes}</span>
+              </span>
+              <span className="breakdown-item">
+                <span className="breakdown-label">3PT:</span>
+                <span className="breakdown-value">{calculateStats(null, 'home').threePointMakes}</span>
+              </span>
+              <span className="breakdown-item">
+                <span className="breakdown-label">FT:</span>
+                <span className="breakdown-value">{calculateStats(null, 'home').freeThrowPoints}</span>
+              </span>
+            </div>
+          </div>
+          
+          <div className="score-divider">VS</div>
+          
+          <div className="team-score away-score">
+            <div className="team-name">{teamNames.away}</div>
+            <div className="total-points">{calculateStats(null, 'away').points}</div>
+            <div className="points-breakdown">
+              <span className="breakdown-item">
+                <span className="breakdown-label">2PT:</span>
+                <span className="breakdown-value">{calculateStats(null, 'away').twoPointMakes}</span>
+              </span>
+              <span className="breakdown-item">
+                <span className="breakdown-label">3PT:</span>
+                <span className="breakdown-value">{calculateStats(null, 'away').threePointMakes}</span>
+              </span>
+              <span className="breakdown-item">
+                <span className="breakdown-label">FT:</span>
+                <span className="breakdown-value">{calculateStats(null, 'away').freeThrowPoints}</span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
       <div className="overall-stats-container">
           <h3>Overall Stats</h3>
           <ShotStats 
@@ -858,7 +1221,8 @@ const CourtTracker = () => {
               stats={playerStats} 
               showDownload={true} 
               playerName={selectedPlayer.name} 
-              teamName={selectedTeam === 'home' ? teamNames.home : teamNames.away} 
+              teamName={selectedTeam === 'home' ? teamNames.home : teamNames.away}
+              onGeneratePlayerPDF={generatePlayerStatsPDFWithCourt}
             />
           </div>
         )}
@@ -876,6 +1240,7 @@ const CourtTracker = () => {
             playerStats={calculatePlayerStats(selectedTeam)}
             otherTeamPlayers={selectedTeam === 'home' ? awayPlayers : homePlayers}
             otherTeamPlayerStats={calculatePlayerStats(selectedTeam === 'home' ? 'away' : 'home')}
+            onGenerateBoxScorePDF={generateBoxScorePDFWithCourt}
           />
         </div>
       </div>

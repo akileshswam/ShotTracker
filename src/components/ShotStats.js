@@ -13,34 +13,47 @@ const ShotStats = ({
   otherTeamName = '',
   otherTeamStats = null,
   otherTeamPlayers = [],
-  otherTeamPlayerStats = {}
+  otherTeamPlayerStats = {},
+  onGeneratePlayerPDF = null,
+  onGenerateBoxScorePDF = null
 }) => {
-  // If no shots have been recorded
-  if (stats.total === 0) {
+  // If no stats have been recorded
+  if (stats.total === 0 && (!stats.assists || stats.assists === 0) && (!stats.rebounds || stats.rebounds === 0) && 
+      (!stats.steals || stats.steals === 0) && (!stats.blocks || stats.blocks === 0) && (!stats.turnovers || stats.turnovers === 0)) {
     return (
       <div className="shot-stats empty-stats">
-        <p>No shots recorded yet.</p>
+        <p>No stats recorded yet.</p>
       </div>
     );
   }
 
-  const handleDownloadPDF = () => {
-    if (isTeam && otherTeamStats) {
-      // Determine which team is home/away based on teamName
-      const isHome = teamName.toLowerCase().includes('home');
-      const gameData = {
-        homeTeam: isHome ? teamName : otherTeamName,
-        awayTeam: isHome ? otherTeamName : teamName,
-        homeStats: isHome ? stats : otherTeamStats,
-        awayStats: isHome ? otherTeamStats : stats,
-        homePlayers: isHome ? players : otherTeamPlayers,
-        awayPlayers: isHome ? otherTeamPlayers : players,
-        homePlayerStats: isHome ? playerStats : otherTeamPlayerStats,
-        awayPlayerStats: isHome ? otherTeamPlayerStats : playerStats
-      };
-      generateBoxScorePDF(gameData);
+  const handleDownloadPDF = async () => {
+    if (isTeam && otherTeamStats && onGenerateBoxScorePDF) {
+      // Use the new box score PDF function with court image
+      await onGenerateBoxScorePDF();
+    } else if (onGeneratePlayerPDF) {
+      // Use the new player stats PDF function with court image
+      await onGeneratePlayerPDF();
     } else {
-      generatePlayerStatsPDF(playerName, stats, teamName);
+      // Fallback to old PDF generation
+      const { generatePlayerStatsPDF, generateBoxScorePDF } = await import('../utils/pdfGenerator');
+      if (isTeam && otherTeamStats) {
+        // Determine which team is home/away based on teamName
+        const isHome = teamName.toLowerCase().includes('home');
+        const gameData = {
+          homeTeam: isHome ? teamName : otherTeamName,
+          awayTeam: isHome ? otherTeamName : teamName,
+          homeStats: isHome ? stats : otherTeamStats,
+          awayStats: isHome ? otherTeamStats : stats,
+          homePlayers: isHome ? players : otherTeamPlayers,
+          awayPlayers: isHome ? otherTeamPlayers : players,
+          homePlayerStats: isHome ? playerStats : otherTeamPlayerStats,
+          awayPlayerStats: isHome ? otherTeamPlayerStats : playerStats
+        };
+        generateBoxScorePDF(gameData);
+      } else {
+        generatePlayerStatsPDF(playerName, stats, teamName);
+      }
     }
   };
 
@@ -70,6 +83,10 @@ const ShotStats = ({
         <div className="stat-box">
           <div className="stat-label">Percentage</div>
           <div className="stat-value">{stats.percentage}%</div>
+        </div>
+        <div className="stat-box">
+          <div className="stat-label">Points</div>
+          <div className="stat-value">{stats.points || 0}</div>
         </div>
       </div>
       
@@ -108,6 +125,30 @@ const ShotStats = ({
               <span>{stats.freeThrows.percentage}%</span>
             </div>
           </div>
+        </div>
+      </div>
+
+      <h4>Additional Statistics</h4>
+      <div className="additional-stats">
+        <div className="stat-box">
+          <div className="stat-label">Assists</div>
+          <div className="stat-value">{stats.assists || 0}</div>
+        </div>
+        <div className="stat-box">
+          <div className="stat-label">Rebounds</div>
+          <div className="stat-value">{stats.rebounds || 0}</div>
+        </div>
+        <div className="stat-box">
+          <div className="stat-label">Steals</div>
+          <div className="stat-value">{stats.steals || 0}</div>
+        </div>
+        <div className="stat-box">
+          <div className="stat-label">Blocks</div>
+          <div className="stat-value">{stats.blocks || 0}</div>
+        </div>
+        <div className="stat-box">
+          <div className="stat-label">Turnovers</div>
+          <div className="stat-value">{stats.turnovers || 0}</div>
         </div>
       </div>
       
