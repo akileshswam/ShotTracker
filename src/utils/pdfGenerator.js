@@ -4,117 +4,109 @@ import 'jspdf-autotable';
 export const generatePlayerStatsPDF = (playerName, stats, teamName, courtImage = null) => {
   // Create new PDF document
   const doc = new jsPDF();
+  const pageWidth = doc.internal.pageSize.width;
+  const margin = 14;
+  const contentWidth = pageWidth - (margin * 2);
   
-  // Page 1: Title and Shot Chart
-  doc.setFontSize(20);
-  doc.text(`Player Stats Report: ${playerName}`, 14, 20);
-  
-  doc.setFontSize(14);
-  doc.text(`Team: ${teamName}`, 14, 30);
+  // Title Section
+  doc.setFontSize(16);
+  doc.text(`Player Stats Report: ${playerName}`, margin, 15);
   
   doc.setFontSize(12);
-  const date = new Date().toLocaleDateString();
-  doc.text(`Generated on: ${date}`, 14, 40);
+  doc.text(`Team: ${teamName}`, margin, 22);
+  doc.text(`Generated: ${new Date().toLocaleDateString()}`, margin, 28);
   
-  let yOffset = 50;
+  // Shot Chart Section - Full Width
+  let yOffset = 35;
   if (courtImage) {
     try {
-      doc.setFontSize(16);
-      doc.text('Shot Chart', 14, yOffset);
-      yOffset += 10;
-      doc.addImage(courtImage, 'PNG', 14, yOffset, 80, 60);
+      doc.setFontSize(12);
+      doc.text('Shot Chart', margin, yOffset);
+      yOffset += 5;
+      
+      // Keep court image size
+      const imageHeight = 85;
+      doc.addImage(courtImage, 'PNG', margin, yOffset, contentWidth, imageHeight);
+      yOffset += imageHeight + 8;
     } catch (error) {
       console.error('Error adding court image to PDF:', error);
+      yOffset += 5;
     }
   }
   
-  // Page 2: Overall Stats and Additional Stats
-  doc.addPage();
-  yOffset = 20;
-  
   // Overall Stats Table
-  doc.setFontSize(16);
-  doc.text('Overall Statistics', 14, yOffset);
-  yOffset += 10;
+  doc.setFontSize(12);
+  doc.text('Overall Statistics', margin, yOffset);
   
   doc.autoTable({
-    startY: yOffset,
-    head: [['Statistic', 'Value']],
+    startY: yOffset + 3,
+    margin: { left: margin, right: margin },
+    head: [['Stat', 'Value']],
     body: [
-      ['Total Shots', stats.total],
-      ['Makes', stats.makes],
-      ['Misses', stats.misses],
-      ['Overall %', `${stats.percentage}%`],
       ['Points', stats.points || 0],
-      ['Field Goals M/A', `${stats.fieldGoals.makes}/${stats.fieldGoals.total}`],
-      ['Field Goal %', `${stats.fieldGoals.percentage}%`],
-      ['Free Throws M/A', `${stats.freeThrows.makes}/${stats.freeThrows.total}`],
-      ['Free Throw %', `${stats.freeThrows.percentage}%`],
+      ['FG M/A', `${stats.fieldGoals.makes}/${stats.fieldGoals.total}`],
+      ['FG%', `${stats.fieldGoals.percentage}%`],
+      ['FT M/A', `${stats.freeThrows.makes}/${stats.freeThrows.total}`],
+      ['FT%', `${stats.freeThrows.percentage}%`]
     ],
-    headStyles: { fillColor: [41, 128, 185] },
+    headStyles: { fillColor: [41, 128, 185], fontSize: 10 },
+    styles: { fontSize: 9, cellPadding: 2 },
+    columnStyles: {
+      0: { cellWidth: 50 },
+      1: { cellWidth: 50, halign: 'center' }
+    },
   });
   
-  yOffset = doc.lastAutoTable.finalY + 15;
-  
-  // Additional Statistics Table
-  doc.setFontSize(16);
-  doc.text('Additional Statistics', 14, yOffset);
-  yOffset += 10;
+  // Additional Stats Table
+  yOffset = doc.autoTable.previous.finalY + 8;
+  doc.setFontSize(12);
+  doc.text('Additional Statistics', margin, yOffset);
   
   doc.autoTable({
-    startY: yOffset,
-    head: [['Statistic', 'Value']],
+    startY: yOffset + 3,
+    margin: { left: margin, right: margin },
+    head: [['Stat', 'Value']],
     body: [
       ['Assists', stats.assists || 0],
       ['Rebounds', stats.rebounds || 0],
       ['Steals', stats.steals || 0],
       ['Blocks', stats.blocks || 0],
-      ['Turnovers', stats.turnovers || 0],
+      ['Turnovers', stats.turnovers || 0]
     ],
-    headStyles: { fillColor: [41, 128, 185] },
+    headStyles: { fillColor: [41, 128, 185], fontSize: 10 },
+    styles: { fontSize: 9, cellPadding: 2 },
+    columnStyles: {
+      0: { cellWidth: 50 },
+      1: { cellWidth: 50, halign: 'center' }
+    },
   });
   
-  // Page 3: Zone Statistics
-  doc.addPage();
-  yOffset = 20;
+  // Zone Stats Table
+  yOffset = doc.autoTable.previous.finalY + 8;
+  doc.setFontSize(12);
+  doc.text('Zone Statistics', margin, yOffset);
   
-  // Add Zone Statistics title
-  doc.setFontSize(16);
-  doc.text('Zone Statistics', 14, yOffset);
-  yOffset += 10;
-  
-  // Zone Stats Tables
-  const zoneStats = [
-    {
-      title: 'Paint',
-      stats: stats.zones.paint,
+  doc.autoTable({
+    startY: yOffset + 3,
+    margin: { left: margin, right: margin },
+    head: [['Zone', 'Makes', 'Attempts', 'Percentage']],
+    body: [
+      ['Paint', stats.zones.paint.makes, stats.zones.paint.attempts, `${stats.zones.paint.percentage}%`],
+      ['Mid-Range', stats.zones.midRange.makes, stats.zones.midRange.attempts, `${stats.zones.midRange.percentage}%`],
+      ['3-Point', stats.zones.threePoint.makes, stats.zones.threePoint.attempts, `${stats.zones.threePoint.percentage}%`]
+    ],
+    headStyles: { fillColor: [41, 128, 185], fontSize: 10 },
+    styles: { fontSize: 9, cellPadding: 2 },
+    columnStyles: {
+      0: { cellWidth: 50 },
+      1: { cellWidth: 30, halign: 'center' },
+      2: { cellWidth: 30, halign: 'center' },
+      3: { cellWidth: 30, halign: 'center' }
     },
-    {
-      title: 'Mid-Range',
-      stats: stats.zones.midRange,
-    },
-    {
-      title: '3-Point',
-      stats: stats.zones.threePoint,
-    },
-  ];
-  
-  zoneStats.forEach((zone) => {
-    doc.autoTable({
-      startY: yOffset,
-      head: [[`${zone.title} Statistics`, 'Value']],
-      body: [
-        ['Makes', zone.stats.makes],
-        ['Attempts', zone.stats.attempts],
-        ['Percentage', `${zone.stats.percentage}%`],
-      ],
-      headStyles: { fillColor: [41, 128, 185] },
-    });
-    yOffset = doc.lastAutoTable.finalY + 10;
   });
   
   // Save the PDF
-  doc.save(`${playerName.replace(/\s+/g, '_')}_stats_${date.replace(/\//g, '-')}.pdf`);
+  doc.save(`${playerName.replace(/\s+/g, '_')}_stats_${new Date().toLocaleDateString().replace(/\//g, '-')}.pdf`);
 };
 
 export const generateBoxScorePDF = (gameData) => {
