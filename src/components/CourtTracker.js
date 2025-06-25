@@ -32,6 +32,8 @@ const CourtTracker = () => {
   });
   const [shotFilterMode, setShotFilterMode] = useState('team'); // 'team', 'player', or 'all'
   const [filteredPlayerId, setFilteredPlayerId] = useState(null);
+  const [pdfShotTeamOverride, setPdfShotTeamOverride] = useState(null);
+  const [playByPlay, setPlayByPlay] = useState([]);
   
   const courtContainerRef = useRef(null);
   
@@ -121,6 +123,16 @@ const CourtTracker = () => {
     };
     
     setShots(prevShots => [...prevShots, newShot]);
+    setPlayByPlay(prev => [
+      ...prev,
+      {
+        id: newShot.id,
+        playerName: newShot.playerName,
+        team: newShot.team,
+        action: newShot.isMake ? (zone === 'threePoint' ? '3PT Make' : zone === 'midRange' ? '2PT Make' : 'Paint Make') : (zone === 'threePoint' ? '3PT Miss' : zone === 'midRange' ? '2PT Miss' : 'Paint Miss'),
+        details: zone
+      }
+    ]);
   };
   
   // Undo last shot
@@ -203,6 +215,9 @@ const CourtTracker = () => {
         });
         break;
     }
+
+    // Remove the most recent action from playByPlay
+    setPlayByPlay(prev => prev.slice(0, -1));
   };
   
   // Update team name
@@ -594,14 +609,18 @@ const CourtTracker = () => {
   // Calculate player stats if a player is selected
   const playerStats = selectedPlayer ? calculateStats(selectedPlayer) : null;
   
-  // Filter shots for display based on current mode
+  // Update getFilteredShots to use pdfShotTeamOverride if set
   const getFilteredShots = () => {
+    if (pdfShotTeamOverride) {
+      // Show all shots for the team being exported
+      return shots.filter(shot => shot.team === pdfShotTeamOverride);
+    }
     if (shotFilterMode === 'team') {
       return shots.filter(shot => shot.team === selectedTeam);
     } else if (shotFilterMode === 'player' && filteredPlayerId) {
       return shots.filter(shot => shot.playerId === filteredPlayerId);
     } else {
-      return shots; // All shots
+      return shots;
     }
   };
   
@@ -611,17 +630,23 @@ const CourtTracker = () => {
       alert('Please select a player first');
       return;
     }
-
     const newFreeThrow = {
       id: Date.now(),
-      isMake: currentSelection === 'make',
-      timestamp: new Date(),
       playerId: selectedPlayer.id,
       playerName: selectedPlayer.name,
       team: selectedPlayer.team
     };
-
     setFreeThrows(prev => [...prev, newFreeThrow]);
+    setPlayByPlay(prev => [
+      ...prev,
+      {
+        id: newFreeThrow.id,
+        playerName: newFreeThrow.playerName,
+        team: newFreeThrow.team,
+        action: 'Free Throw',
+        details: ''
+      }
+    ]);
   };
 
   // Add assist handler
@@ -630,16 +655,23 @@ const CourtTracker = () => {
       alert('Please select a player first');
       return;
     }
-
     const newAssist = {
       id: Date.now(),
-      timestamp: new Date(),
       playerId: selectedPlayer.id,
       playerName: selectedPlayer.name,
       team: selectedPlayer.team
     };
-
     setAssists(prev => [...prev, newAssist]);
+    setPlayByPlay(prev => [
+      ...prev,
+      {
+        id: newAssist.id,
+        playerName: newAssist.playerName,
+        team: newAssist.team,
+        action: 'Assist',
+        details: ''
+      }
+    ]);
   };
 
   // Add rebound handler
@@ -648,16 +680,23 @@ const CourtTracker = () => {
       alert('Please select a player first');
       return;
     }
-
     const newRebound = {
       id: Date.now(),
-      timestamp: new Date(),
       playerId: selectedPlayer.id,
       playerName: selectedPlayer.name,
       team: selectedPlayer.team
     };
-
     setRebounds(prev => [...prev, newRebound]);
+    setPlayByPlay(prev => [
+      ...prev,
+      {
+        id: newRebound.id,
+        playerName: newRebound.playerName,
+        team: newRebound.team,
+        action: 'Rebound',
+        details: ''
+      }
+    ]);
   };
 
   // Add steal handler
@@ -666,16 +705,23 @@ const CourtTracker = () => {
       alert('Please select a player first');
       return;
     }
-
     const newSteal = {
       id: Date.now(),
-      timestamp: new Date(),
       playerId: selectedPlayer.id,
       playerName: selectedPlayer.name,
       team: selectedPlayer.team
     };
-
     setSteals(prev => [...prev, newSteal]);
+    setPlayByPlay(prev => [
+      ...prev,
+      {
+        id: newSteal.id,
+        playerName: newSteal.playerName,
+        team: newSteal.team,
+        action: 'Steal',
+        details: ''
+      }
+    ]);
   };
 
   // Add block handler
@@ -684,16 +730,23 @@ const CourtTracker = () => {
       alert('Please select a player first');
       return;
     }
-
     const newBlock = {
       id: Date.now(),
-      timestamp: new Date(),
       playerId: selectedPlayer.id,
       playerName: selectedPlayer.name,
       team: selectedPlayer.team
     };
-
     setBlocks(prev => [...prev, newBlock]);
+    setPlayByPlay(prev => [
+      ...prev,
+      {
+        id: newBlock.id,
+        playerName: newBlock.playerName,
+        team: newBlock.team,
+        action: 'Block',
+        details: ''
+      }
+    ]);
   };
 
   // Add turnover handler
@@ -702,37 +755,38 @@ const CourtTracker = () => {
       alert('Please select a player first');
       return;
     }
-
     const newTurnover = {
       id: Date.now(),
-      timestamp: new Date(),
       playerId: selectedPlayer.id,
       playerName: selectedPlayer.name,
       team: selectedPlayer.team
     };
-
     setTurnovers(prev => [...prev, newTurnover]);
+    setPlayByPlay(prev => [
+      ...prev,
+      {
+        id: newTurnover.id,
+        playerName: newTurnover.playerName,
+        team: newTurnover.team,
+        action: 'Turnover',
+        details: ''
+      }
+    ]);
   };
 
   // Function to capture court as image
   const captureCourtImage = async (teamFilter = null) => {
     if (!courtContainerRef.current) return null;
     
-    // Temporarily hide shots from other team if team filter is provided
-    const shotElements = courtContainerRef.current.querySelectorAll('.shot-marker');
-    const hiddenShots = [];
-    
+    // If teamFilter is set, temporarily override the shot filter for PDF export
     if (teamFilter) {
-      shotElements.forEach(shot => {
-        const shotData = shots.find(s => s.id === parseInt(shot.getAttribute('data-shot-id')));
-        if (shotData && shotData.team !== teamFilter) {
-          shot.style.display = 'none';
-          hiddenShots.push(shot);
-        }
-      });
+      setPdfShotTeamOverride(teamFilter);
+      // Wait for DOM to update
+      await new Promise(r => setTimeout(r, 0));
     }
     
     // Use html2canvas to capture the court
+    let dataUrl = null;
     try {
       const html2canvas = (await import('html2canvas')).default;
       const canvas = await html2canvas(courtContainerRef.current, {
@@ -741,23 +795,15 @@ const CourtTracker = () => {
         useCORS: true,
         allowTaint: true
       });
-      
-      // Restore hidden shots
-      hiddenShots.forEach(shot => {
-        shot.style.display = '';
-      });
-      
-      return canvas.toDataURL('image/png');
+      dataUrl = canvas.toDataURL('image/png');
     } catch (error) {
       console.error('Error capturing court image:', error);
-      
-      // Restore hidden shots on error
-      hiddenShots.forEach(shot => {
-        shot.style.display = '';
-      });
-      
-      return null;
     }
+    // Clear the override after capture
+    if (teamFilter) {
+      setPdfShotTeamOverride(null);
+    }
+    return dataUrl;
   };
 
   // Function to generate player stats PDF with court image
@@ -803,6 +849,21 @@ const CourtTracker = () => {
     // Import and call the PDF generator
     const { generateBoxScorePDF } = await import('../utils/pdfGenerator');
     generateBoxScorePDF(gameData);
+  };
+  
+  // Remove a specific shot by ID
+  const removeShot = (shotId) => {
+    setShots(prevShots => prevShots.filter(shot => shot.id !== shotId));
+  };
+
+  // Handle right-click on shot marker
+  const handleShotRightClick = (e, shotId) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (window.confirm('Remove this shot?')) {
+      removeShot(shotId);
+    }
   };
   
   return (
@@ -1083,9 +1144,11 @@ const CourtTracker = () => {
                 className={`shot-marker ${shot.isMake ? 'make' : 'miss'}`}
                 style={{
                   left: `${shot.x * 100}%`,
-                  top: `${shot.y * 100}%`
+                  top: `${shot.y * 100}%`,
+                  cursor: 'pointer'
                 }}
-                title={`${shot.playerName}: ${shot.isMake ? 'Make' : 'Miss'} - ${shot.zone || 'Unknown'}`}
+                title={`${shot.playerName}: ${shot.isMake ? 'Make' : 'Miss'} - ${shot.zone || 'Unknown'} (Right-click to remove)`}
+                onContextMenu={(e) => handleShotRightClick(e, shot.id)}
               ></div>
             ))}
           </div>
@@ -1243,6 +1306,22 @@ const CourtTracker = () => {
             onGenerateBoxScorePDF={generateBoxScorePDFWithCourt}
           />
         </div>
+      </div>
+
+      {/* Play-by-Play Section */}
+      <div className="play-by-play-section" style={{marginTop: 32, background: 'var(--panel-bg)', borderRadius: 8, padding: 20, boxShadow: 'var(--panel-shadow)'}}>
+        <h3 style={{marginTop: 0}}>Play-by-Play</h3>
+        <ul style={{listStyle: 'none', padding: 0, margin: 0, maxHeight: 300, overflowY: 'auto'}}>
+          {[...playByPlay].reverse().map((entry, idx) => (
+            <li key={entry.id} style={{marginBottom: 8, color: entry.team === 'home' ? '#e74c3c' : '#3498db'}}>
+              <span style={{fontWeight: 600}}>{entry.playerName}</span>
+              {` (${entry.team === 'home' ? teamNames.home : teamNames.away}) `}
+              <span style={{fontWeight: 500}}>{entry.action}</span>
+              {entry.details && ` (${entry.details})`}
+            </li>
+          ))}
+          {playByPlay.length === 0 && <li style={{color: '#aaa'}}>No actions yet.</li>}
+        </ul>
       </div>
     </div>
   );

@@ -314,11 +314,11 @@ body {
 }
 
 .home-panel {
-  border-top-color: #1976d2;
+  border-top-color: var(--primary-color);
 }
 
 .away-panel {
-  border-top-color: var(--primary-color);
+  border-top-color: #1976d2;
 }
 
 .team-panel h3 {
@@ -360,11 +360,11 @@ body {
 }
 
 .home-panel h3 {
-  color: #1976d2;
+  color: var(--primary-color);
 }
 
 .away-panel h3 {
-  color: var(--primary-color);
+  color: #1976d2;
 }
 
 .team-player-list {
@@ -492,6 +492,7 @@ body {
   transition: transform 0.1s, width 0.1s, height 0.1s;
   pointer-events: auto;
   cursor: pointer;
+  animation: shotPulse 3s infinite;
 }
 
 .shot-marker:before {
@@ -544,6 +545,18 @@ body {
 .shot-marker:hover {
   transform: translate(-50%, -50%) scale(1.5);
   z-index: 100;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+.shot-marker:active {
+  transform: translate(-50%, -50%) scale(1.3);
+}
+
+/* Add a subtle pulse animation to indicate interactivity */
+@keyframes shotPulse {
+  0% { box-shadow: 0 0 5px rgba(0, 0, 0, 0.5); }
+  50% { box-shadow: 0 0 8px rgba(255, 255, 255, 0.2); }
+  100% { box-shadow: 0 0 5px rgba(0, 0, 0, 0.5); }
 }
 
 /* Points Tracker */
